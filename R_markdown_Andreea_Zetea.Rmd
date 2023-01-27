@@ -1,0 +1,58 @@
+---
+title: "make_art() function"
+output: html_document
+date: "2023-01-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The make_art() function
+
+This function takes 3 arguments: a seed, a number a, and a color palette which consists of one or more colors to be used in the art. It creates a confetti-like shape using ggplot with a void theme as a blank background.
+
+```{r}
+library(ggplot2)
+library(tibble)
+make_art <- function(seed, a, col_palette){
+  set.seed(seed)
+  confetti <- tibble(
+    x0 = rnorm(a),
+    y0 = rnorm(a),
+    x1 = x0 + runif(a, min = -.24, max = .26),
+    y1 = y0 + runif(a, min = -.26, max = .23),
+    shade = rnorm(a), 
+    size = rnorm(a)
+)
+  confetti |> 
+    ggplot(aes(
+      x = x1, 
+      y = y1, 
+      xend = x0,
+      yend = y0,
+      color = shade,
+      size = size)) +
+    geom_segment(show.legend = FALSE) +
+    coord_polar("x") +
+    scale_y_continuous(expand = c(-0.5, 1)) +
+    scale_x_continuous(expand = c(-0.1, 0.5)) + 
+    scale_colour_gradientn(colors = col_palette) + 
+    scale_size(range = c(0, 50)) + 
+    theme_void()
+}
+
+
+```
+
+## Created Art
+
+These are two examples created with this function which vary the number of segments and the colors used.
+
+```{r}
+make_art(1, 171, col_palette = c("red", "purple", "turquoise"))
+```
+
+```{r}
+make_art(1, 89, col_palette = c("orange", "gold", "green"))
+```
